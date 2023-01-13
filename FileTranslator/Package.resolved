@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "jsonmodel-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Sage-Bionetworks/JsonModel-Swift.git",
+      "state" : {
+        "revision" : "cf13a8af6b09c25605f340150bb6392ea9d3c0f8",
+        "version" : "2.0.0"
+      }
+    },
+    {
+      "identity" : "xmlcoder",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CoreOffice/XMLCoder.git",
+      "state" : {
+        "revision" : "c438dad94f6a243b411b70a4b4bac54595064808",
+        "version" : "0.15.0"
+      }
+    }
+  ],
+  "version" : 2
+}

@@ -13,15 +13,15 @@ final class FileTranslatorTests: XCTestCase {
         let decoder = AndroidStringsDecoder()
         let resources = try decoder.decode(contentsOf: fileURL)
         
-        let expectedFirst = StringsFile.StringValue(name: "app_name", value: "Mobile Toolbox")
+        let expectedFirst = StringValue(name: "app_name", value: "Mobile Toolbox")
         XCTAssertEqual(expectedFirst, resources.strings.first)
         
-        let expectedToWithdraw = StringsFile.StringValue(name: "to_withdraw", value: "To <b>withdraw from this study</b>, you’ll need the following info:")
+        let expectedToWithdraw = StringValue(name: "to_withdraw", value: "To <b>withdraw from this study</b>, you’ll need the following info:")
         let actualToWithdraw = resources.strings.first(where: { $0.name == expectedToWithdraw.name })
         XCTAssertEqual(expectedToWithdraw, actualToWithdraw)
     }
     
-    func testAndroidXMLStringsFile_Encoding() throws {
+    func testAndroidStringsFile_Encoding() throws {
         let file = StringsFile(strings: [
             .init(name: "app_name", value: "Mobile Toolbox"),
             .init(name: "to_withdraw", value: "To <b>withdraw from this study</b>, you’ll need the following info:"),
@@ -46,11 +46,55 @@ final class FileTranslatorTests: XCTestCase {
         let decoder = IOSStringsDecoder()
         let strings = try decoder.decode(contentsOf: fileURL).strings
         
-        let expectedFirst = StringsFile.StringValue(name: "ABOUT THE STUDY", value: "ABOUT THE STUDY",
-                                                    comment: "return Text(\"ABOUT THE STUDY\", bundle: .module)")
+        let expectedFirst = StringValue(name: "ABOUT THE STUDY", value: "ABOUT THE STUDY",
+                                        comment: "return Text(\"ABOUT THE STUDY\", bundle: .module)")
         XCTAssertEqual(expectedFirst.name, strings.first?.name)
         XCTAssertEqual(expectedFirst.value, strings.first?.value)
         XCTAssertEqual(expectedFirst.comment, strings.first?.comment)
     }
     
+    func testIOSStringsFile_Encoding() throws {
+        let file = StringsFile(strings: [
+            .init(name: "app_name", value: "Mobile Toolbox"),
+            .init(name: "to_withdraw", value: "To <b>withdraw from this study</b>, you’ll need the following info:"),
+        ])
+        
+        let encoder = IOSStringsEncoder()
+        let data = try encoder.encode(file)
+        let actualValue = String(data: data, encoding: .utf8)!
+        
+        let expectedValue = """
+        /*  */
+        "app_name" = "Mobile Toolbox";
+        
+        /*  */
+        "to_withdraw" = "To <b>withdraw from this study</b>, you’ll need the following info:";
+        
+        """
+        
+        XCTAssertEqual(expectedValue, actualValue)
+    }
+    
+    func testJsonFile_Coding() throws {
+        guard let fileURL = Bundle.module.url(forResource: "PrivacyNotice", withExtension: "json")
+        else {
+            XCTFail("Failed to get strings file")
+            return
+        }
+        
+        let data = try Data(contentsOf: fileURL)
+        let decoder = JSONDecoder()
+        let actualValue = try decoder.decode(JsonFile.self, from: data)
+        
+        XCTAssertEqual("notices|0|text", actualValue.strings.first?.name)
+        XCTAssertEqual("Collect the data you give us when you register and when you use the App. This may include sensitive data like your health information.", actualValue.strings.first?.value)
+        
+        let encoder = JSONEncoder()
+        
+        let encodedData = try encoder.encode(actualValue)
+        
+        let expectedDictionary = try! JSONSerialization.jsonObject(with: data) as! NSDictionary
+        let actualDictionary = try JSONSerialization.jsonObject(with: encodedData) as? NSDictionary
+        XCTAssertEqual(expectedDictionary, actualDictionary)
+    }
 }

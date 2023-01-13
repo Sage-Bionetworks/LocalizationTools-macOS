@@ -10,7 +10,7 @@ struct IOSStringsEncoder {
     }
 }
 
-extension StringsFile.StringValue {
+extension StringValue {
     fileprivate func xcodeString() -> String {
         """
         /* \(comment ?? "") */
@@ -40,7 +40,7 @@ struct IOSStringsDecoder {
         }
         
         var previousEnd: String.Index?
-        let strings: [StringsFile.StringValue] = try stringPairs.enumerated().map { offset, pair in
+        let strings: [StringValue] = try stringPairs.enumerated().map { offset, pair in
             let comment: String? = comments.first { match in
                 match.endIndex < pair.startIndex && (previousEnd.map { $0 < match.startIndex } ?? true)
             }.map { match in

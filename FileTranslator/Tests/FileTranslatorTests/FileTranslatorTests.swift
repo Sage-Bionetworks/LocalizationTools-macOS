@@ -97,4 +97,27 @@ final class FileTranslatorTests: XCTestCase {
         let actualDictionary = try JSONSerialization.jsonObject(with: encodedData) as? NSDictionary
         XCTAssertEqual(expectedDictionary, actualDictionary)
     }
+    
+    func testAndroidEscapedApostrophe() throws {
+        guard let fileURL = Bundle.module.url(forResource: "strings", withExtension: "xml")
+        else {
+            XCTFail("Failed to get strings file")
+            return
+        }
+        
+        let decoder = AndroidStringsDecoder()
+        let stringsFile = try decoder.decode(contentsOf: fileURL)
+        let translationPacket = TranslationPacket(baseURL: fileURL.deletingLastPathComponent(),
+                                                  stringsMap: [.android : [fileURL.lastPathComponent : stringsFile]])
+        let rows = try PacketMap(packet: translationPacket).rows
+        
+        guard let actualRow = rows.first(where: { $0.keys[.android]?.name == "please_dont_close" })
+        else {
+            XCTFail("Failed to find expected row")
+            return
+        }
+        
+        XCTAssertEqual("Please don’t close the app quite yet, we’re uploading your contributions to the cloud.", actualRow.english)
+        
+    }
 }

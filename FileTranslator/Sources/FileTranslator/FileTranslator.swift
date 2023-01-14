@@ -3,7 +3,7 @@ import Foundation
 @main
 public struct FileTranslator {
     enum Actions : String, CaseIterable {
-        case create
+        case create, clean
     }
 
     public static func main() {
@@ -33,6 +33,10 @@ public struct FileTranslator {
                 print("creating translation packet at \(url)")
                 let packet = try TranslationPacket(baseURL: url)
                 try packet.exportToTSV()
+            case .clean:
+                let templateURL = url.appending(path: kTemplatePath)
+                let cleaner = FileCleaner()
+                try cleaner.clean(at: templateURL)
             }
         }
         catch {

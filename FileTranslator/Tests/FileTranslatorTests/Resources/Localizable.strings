@@ -61,8 +61,8 @@
 /* return Text("Phone", bundle: .module) */
 "Phone" = "Phone";
 
-/* detail: LocalizedStringKey("Please don't close the app quite yet. We're uploading your contributions to the cloud.")) */
-"Please don't close the app quite yet. We're uploading your contributions to the cloud." = "Please don't close the app quite yet. We're uploading your contributions to the cloud.";
+/* detail: LocalizedStringKey("Please don’t close the app quite yet. We’re uploading your contributions to the cloud.")) */
+"Please don’t close the app quite yet. We’re uploading your contributions to the cloud." = "Please don’t close the app quite yet. We’re uploading your contributions to the cloud.";
 
 /* return Text("Principal Investigator", bundle: .module) */
 "Principal Investigator" = "Principal Investigator";
@@ -106,8 +106,8 @@
 /* Text("We will", bundle: .module) */
 "We will" = "We will";
 
-/* Text("We won't", bundle: .module) */
-"We won't" = "We won't";
+/* Text("We won’t", bundle: .module) */
+"We won’t" = "We won’t";
 
 /* title: LocalizedStringKey("Well done!"), */
 "Well done!" = "Well done!";
@@ -115,8 +115,8 @@
 /* Text("You can", bundle: .module) */
 "You can" = "You can";
 
-/* detail: LocalizedStringKey("You've completed the study.\n\nThank you for your contributions.")) */
-"You've completed the study.\n\nThank you for your contributions." = "You've completed the study.\n\nThank you for your contributions.";
+/* detail: LocalizedStringKey("You’ve completed the study.\n\nThank you for your contributions.")) */
+"You’ve completed the study.\n\nThank you for your contributions." = "You’ve completed the study.\n\nThank you for your contributions.";
 
 /* section(title: Text("Your Participant Rights", bundle: .module), */
 "Your Participant Rights" = "Your Participant Rights";

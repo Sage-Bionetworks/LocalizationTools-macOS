@@ -4,40 +4,44 @@
 import Foundation
 import JsonModel
 
-fileprivate let templatePath = "en"
+let kTemplatePath = "en"
 
 enum FileTypes : String, Codable, CodingKey, CaseIterable {
     case json = "JSON", android = "Android", iOS = "iOS"
+    
+    func decoder() -> any StringsDecoder {
+        switch self {
+        case .json:
+            return JsonStringsDecoder()
+        case .android:
+            return AndroidStringsDecoder()
+        case .iOS:
+            return IOSStringsDecoder()
+        }
+    }
+    
+    var fileExtension: String {
+        decoder().fileExtension
+    }
 }
 
-struct TranslationPacket : Hashable {
+struct TranslationPacket {
     let baseURL: URL
     
-    let android: [String : StringsFile]
-    let iOS: [String : StringsFile]
-    let json: [String : JsonFile]
+    let stringsMap: [FileTypes : [String : StringsContainer]]
     
-    var stringsMap: [FileTypes : [String : StringsContainer]] {
-        [
-            .android : android,
-            .iOS : iOS,
-            .json : json
-        ]
+    init(baseURL: URL, stringsMap: [FileTypes : [String : StringsContainer]]) {
+        self.baseURL = baseURL
+        self.stringsMap = stringsMap
     }
     
     init(baseURL: URL) throws {
         self.baseURL = baseURL
-        
-        let templateURL = baseURL.appending(path: templatePath)
-        
-        let androidDecoder = AndroidStringsDecoder()
-        self.android = try androidDecoder.decodeAll(at: templateURL.appending(path: FileTypes.android.rawValue))
-        
-        let iosDecoder = IOSStringsDecoder()
-        self.iOS = try iosDecoder.decodeAll(at: templateURL.appending(path: FileTypes.iOS.rawValue))
-        
-        let jsonDecoder = JsonStringsDecoder()
-        self.json = try jsonDecoder.decodeAll(at: templateURL.appending(path: FileTypes.json.rawValue))
+
+        let templateURL = baseURL.appending(path: kTemplatePath)
+        self.stringsMap = try FileTypes.allCases.reduce(into: [:], { partialResult, fileType in
+            partialResult[fileType] = try fileType.decoder().decodeAll(at: templateURL.appending(path: fileType.rawValue))
+        })
     }
     
     func exportToTSV() throws {
@@ -93,13 +97,14 @@ struct PacketMap : Hashable, Codable {
                 container.strings.forEach { pair in
                     var value = pair.value
                     if fileType == .android {
-                        // Clean up apostrophes in android string
-                        value.replace("\'", with: "’")
+                        // Clean up all apostophes in the Android strings files.
+                        value.replace(#/\\'/#, with: "’")
+                        value.replace(#/\'/#, with: "’")
                     }
                     
-                    let idx = rows.firstIndex(where: { $0.english == pair.value })
-                    var row = idx.map { rows[$0] } ?? .init(english: pair.value)
-                    let name = pair.name == pair.value ? "" : pair.name
+                    let idx = rows.firstIndex(where: { $0.english == value })
+                    var row = idx.map { rows[$0] } ?? .init(english: value)
+                    let name = (fileType == .iOS) && (pair.name == value) ? "" : pair.name
                     row.keys[fileType] = .init(path: filepath, name: name)
                     if let comment = pair.comment {
                         row.comment = comment

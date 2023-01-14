@@ -71,9 +71,16 @@ struct TranslationPacket {
     }
 }
 
+let kWrappedCharacters = CharacterSet(charactersIn: "\n\t\"")
+
 extension String {
+    
+    func contains(_ characters: CharacterSet) -> Bool {
+        self.rangeOfCharacter(from: characters) != nil
+    }
+    
     func wrapped() -> String {
-        self.contains("\n") ? "\"\(self)\"" : self
+        self.contains(kWrappedCharacters) ? "\"\(self)\"" : self
     }
 }
 
@@ -95,13 +102,7 @@ struct PacketMap : Hashable, Codable {
         FileTypes.allCases.forEach { fileType in
             stringsMap[fileType]?.forEach { filepath, container in
                 container.strings.forEach { pair in
-                    var value = pair.value
-                    if fileType == .android {
-                        // Clean up all apostophes in the Android strings files.
-                        value.replace(#/\\'/#, with: "’")
-                        value.replace(#/\'/#, with: "’")
-                    }
-                    
+                    let value = pair.value
                     let idx = rows.firstIndex(where: { $0.english == value })
                     var row = idx.map { rows[$0] } ?? .init(english: value)
                     let name = (fileType == .iOS) && (pair.name == value) ? "" : pair.name

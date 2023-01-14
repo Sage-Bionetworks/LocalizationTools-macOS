@@ -29,10 +29,12 @@ class AndroidStringsEncoder : XMLEncoder {
     }
 }
 
-class AndroidStringsDecoder : XMLDecoder {
+class AndroidStringsDecoder : XMLDecoder, StringsDecoder {
     init() {
         super.init(trimValueWhitespaces: false, removeWhitespaceElements: false)
     }
+    
+    var fileExtension: String { "xml" }
     
     func decode(contentsOf fileURL: URL) throws -> StringsFile {
         let data = try Data(contentsOf: fileURL)

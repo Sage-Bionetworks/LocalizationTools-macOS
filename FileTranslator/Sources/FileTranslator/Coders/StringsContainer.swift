@@ -1,10 +1,45 @@
-// Created 1/13/23
+// Created 1/12/23
 // swift-version:5.0
 
 import Foundation
+import XMLCoder
 import JsonModel
 
-struct JsonFile : Codable, Hashable {
+protocol StringsContainer {
+    var strings: [StringValue] { get }
+}
+
+
+
+struct StringValue: Codable, Hashable, DynamicNodeEncoding {
+    let name: String
+    let value: String
+    var comment: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case name
+        case value = ""
+    }
+    
+    static func nodeEncoding(for key: CodingKey) -> XMLCoder.XMLEncoder.NodeEncoding {
+        switch key {
+        case CodingKeys.name:
+            return .attribute
+        default:
+            return .element
+        }
+    }
+}
+
+struct StringsFile: Codable, Hashable, StringsContainer {
+    let strings: [StringValue]
+    
+    enum CodingKeys: String, CodingKey {
+        case strings = "string"
+    }
+}
+
+struct JsonFile : Codable, Hashable, StringsContainer {
     private(set) var json: AnyCodableDictionary
     var strings: [StringValue]
 

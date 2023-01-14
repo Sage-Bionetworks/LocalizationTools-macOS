@@ -20,7 +20,10 @@ extension StringValue {
     }
 }
 
-struct IOSStringsDecoder {
+struct IOSStringsDecoder : StringsDecoder {
+
+    var fileExtension: String { "strings" }
+    
     func decode(contentsOf fileURL: URL) throws -> StringsFile {
         let data = try Data(contentsOf: fileURL)
         let decodedString = String(data: data, encoding: .utf8)!

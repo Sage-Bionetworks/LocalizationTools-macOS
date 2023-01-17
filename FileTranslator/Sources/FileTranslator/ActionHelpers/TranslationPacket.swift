@@ -102,11 +102,16 @@ struct PacketMap : Hashable, Codable {
         FileTypes.allCases.forEach { fileType in
             stringsMap[fileType]?.forEach { filepath, container in
                 container.strings.forEach { pair in
-                    let value = pair.value
-                    let idx = rows.firstIndex(where: { $0.english == value })
+                    var value = pair.value
+                    value.replace("\\n", with: "\n")
+                    if fileType == .iOS || fileType == .json {
+                        value.replace("%@", with: "%@$s")
+                    }
+                    let idx = rows.firstIndex(where: {
+                        $0.english.compare(value, options: .caseInsensitive) == .orderedSame
+                    })
                     var row = idx.map { rows[$0] } ?? .init(english: value)
-                    let name = (fileType == .iOS) && (pair.name == value) ? "" : pair.name
-                    row.keys[fileType] = .init(path: filepath, name: name)
+                    row.keys[fileType] = .init(path: filepath, name: pair.name)
                     if let comment = pair.comment {
                         row.comment = comment
                     }

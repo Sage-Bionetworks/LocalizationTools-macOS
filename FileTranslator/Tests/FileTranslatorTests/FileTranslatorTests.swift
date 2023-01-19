@@ -120,4 +120,19 @@ final class FileTranslatorTests: XCTestCase {
         XCTAssertEqual("Please don’t close the app quite yet, we’re uploading your contributions to the cloud.", actualRow.english)
         
     }
+    
+    func testHtmlTable_Decode() throws {
+        guard let fileURL = Bundle.module.url(forResource: "es", withExtension: "html")
+        else {
+            XCTFail("Failed to get html file")
+            return
+        }
+        
+        let decoder = HTMLTableDecoder()
+        let table = try decoder.decode(contentsOf: fileURL)
+//
+//        XCTAssertEqual(174, table.tbody.tr.count)
+//        let headerRow = ["JSON path","JSON name","Android path","Android name","iOS path","iOS name","English","Translation","Comments",""]
+//        XCTAssertEqual(headerRow, table.tbody.tr.first?.td)
+    }
 }

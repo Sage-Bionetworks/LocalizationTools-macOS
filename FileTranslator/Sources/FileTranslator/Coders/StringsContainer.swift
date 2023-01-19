@@ -9,8 +9,6 @@ protocol StringsContainer {
     var strings: [StringValue] { get }
 }
 
-
-
 struct StringValue: Codable, Hashable, DynamicNodeEncoding {
     let name: String
     let value: String

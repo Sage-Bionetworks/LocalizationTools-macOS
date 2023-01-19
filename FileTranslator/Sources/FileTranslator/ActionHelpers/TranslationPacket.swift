@@ -80,7 +80,9 @@ extension String {
     }
     
     func wrapped() -> String {
-        self.contains(kWrappedCharacters) ? "\"\(self)\"" : self
+        var value = self
+        value.replace("\\n", with: "\n")
+        return value.contains(kWrappedCharacters) ? "\"\(value)\"" : value
     }
 }
 
@@ -92,7 +94,7 @@ extension Array where Element == String {
 
 fileprivate let packetRowSeparator = "\t"
 
-struct PacketMap : Hashable, Codable {
+struct PacketMap : Hashable {
     let rows: [Row]
     
     init(packet: TranslationPacket) throws {
@@ -103,9 +105,9 @@ struct PacketMap : Hashable, Codable {
             stringsMap[fileType]?.forEach { filepath, container in
                 container.strings.forEach { pair in
                     var value = pair.value
-                    value.replace("\\n", with: "\n")
-                    if fileType == .iOS || fileType == .json {
-                        value.replace("%@", with: "%@$s")
+                    value.replace("\n", with: "\\n")
+                    if fileType == .iOS {
+                        value.replace("%@", with: "%1$s")
                     }
                     let idx = rows.firstIndex(where: {
                         $0.english.compare(value, options: .caseInsensitive) == .orderedSame
@@ -128,7 +130,7 @@ struct PacketMap : Hashable, Codable {
         self.rows = rows
     }
     
-    struct Row : Hashable, Codable {
+    struct Row : Hashable {
         var keys: [FileTypes: PathNamePair]
         let english: String
         var translation: String?
@@ -140,7 +142,7 @@ struct PacketMap : Hashable, Codable {
         }
     }
     
-    struct PathNamePair : Hashable, Codable {
+    struct PathNamePair : Hashable {
         let path: String
         let name: String
     }

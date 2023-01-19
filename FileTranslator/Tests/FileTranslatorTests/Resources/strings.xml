@@ -18,7 +18,7 @@
     <string name="study_support">"Study Support"</string>
     <string name="thank_you">Thank you for your patience. \n\n You may exit the app</string>
     <string name="hang_tight">Hang tight...</string>
-    <string name="please_dont_close">Please don\'t close the app quite yet, we\'re uploading your contributions to the cloud.</string>
+    <string name="please_dont_close">Please don’t close the app quite yet, we’re uploading your contributions to the cloud.</string>
     <string name="title_home">Home</string>
     <string name="title_past_activities">Past Activities</string>
     <string name="title_study_info">Study Info</string>
@@ -28,7 +28,7 @@
     <string name="thank_you_for_your_contributions">Thank you for your contributions!</string>
     <string name="your_completed_activities">Your completed activities will be shown here.</string>
     <string name="minutes">minutes</string>
-    <string name="nice_you_re_all_up_to_date">nice, you\'re all up to date</string>
+    <string name="nice_you_re_all_up_to_date">nice, you’re all up to date</string>
     <string name="about_the_study">About the study</string>
     <string name="contact_and_support">Contact &amp; Support</string>
     <string name="general_support">General Support</string>
@@ -61,6 +61,6 @@
     <string name="edit_permission">Edit Permission</string>
     <string name="notifications">Notifications</string>
     <string name="allow">Allow</string>
-    <string name="dont_allow">Don\'t Allow</string>
+    <string name="dont_allow">Don’t Allow</string>
 
 </resources>

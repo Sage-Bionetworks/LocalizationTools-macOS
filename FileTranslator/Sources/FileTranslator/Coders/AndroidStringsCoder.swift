@@ -16,14 +16,13 @@ class AndroidStringsEncoder : XMLEncoder {
         ]
     }
     
-    func encode(_ value: StringsFile) throws -> Data {
+    func encode(strings value: StringsFile) throws -> Data {
         let encodedData = try self.encode(value, withRootKey: "resources", header: XMLHeader(version: 1.0, encoding: "UTF-8"))
         let encodedString = String(data: encodedData, encoding: .utf8)!
         let data = encodedString
             .replacing("UTF-8", with: "utf-8")
-            .replacing("\n", with: "\r\n")
-            .replacing("<string", with: "\r\n    <string")
-            .replacing("</resources>", with: "\r\n</resources>")
+            .replacing("<string", with: "\n    <string")
+            .replacing("</resources>", with: "\n</resources>\n")
             .data(using: .utf8)!
         return data
     }

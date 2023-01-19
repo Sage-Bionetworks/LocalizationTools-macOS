@@ -4,6 +4,8 @@
 import Foundation
 import XMLCoder
 
+let kNoTranslation = "NO TRANSLATION FOUND"
+
 class HTMLTableDecoder : XMLDecoder {
     init() {
         super.init(removeWhitespaceElements: false)
@@ -62,10 +64,11 @@ class HTMLTableDecoder : XMLDecoder {
                 }
                 guard !name.isEmpty && !path.isEmpty else { return }
                 
-                ["en", localeCode].forEach { locale in
+                [kTemplatePath, localeCode].forEach { locale in
                     var value = (locale == localeCode) ? translation : english
-                    guard !value.isEmpty else { return }
-                    
+                    if value.isEmpty {
+                        value = kNoTranslation
+                    }
                     if fileType == .iOS {
                         value.replace("%1$s", with: "%@")
                     }

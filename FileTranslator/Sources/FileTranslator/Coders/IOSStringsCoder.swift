@@ -5,7 +5,7 @@ import Foundation
 import RegexBuilder
 
 struct IOSStringsEncoder {
-    func encode(_ value: StringsFile) throws -> Data {
+    func encode(strings value: StringsFile) throws -> Data {
         value.strings.map { $0.xcodeString() }.joined(separator: "\n").data(using: .utf8)!
     }
 }

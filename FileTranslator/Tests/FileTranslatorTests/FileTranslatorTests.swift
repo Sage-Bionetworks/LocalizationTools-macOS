@@ -28,7 +28,7 @@ final class FileTranslatorTests: XCTestCase {
         ])
         
         let encoder = AndroidStringsEncoder()
-        let data = try encoder.encode(file)
+        let data = try encoder.encode(strings: file)
         let actualValue = String(data: data, encoding: .utf8)!
         
         let expectedValue = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<resources>\r\n    <string name=\"app_name\">Mobile Toolbox</string>\r\n    <string name=\"to_withdraw\">To &lt;b>withdraw from this study&lt;/b>, you’ll need the following info:</string>\r\n</resources>"
@@ -60,7 +60,7 @@ final class FileTranslatorTests: XCTestCase {
         ])
         
         let encoder = IOSStringsEncoder()
-        let data = try encoder.encode(file)
+        let data = try encoder.encode(strings: file)
         let actualValue = String(data: data, encoding: .utf8)!
         
         let expectedValue = """
@@ -129,10 +129,21 @@ final class FileTranslatorTests: XCTestCase {
         }
         
         let decoder = HTMLTableDecoder()
-        let table = try decoder.decode(contentsOf: fileURL)
-//
-//        XCTAssertEqual(174, table.tbody.tr.count)
-//        let headerRow = ["JSON path","JSON name","Android path","Android name","iOS path","iOS name","English","Translation","Comments",""]
-//        XCTAssertEqual(headerRow, table.tbody.tr.first?.td)
+        let files = try decoder.decode(contentsOf: fileURL)
+        
+        let androidStrings = files[.init(filePath: "MobileToolboxApp-Android/strings.xml", fileType: .android, locale: "es")]
+        XCTAssertNotNil(androidStrings)
+        let translation1 = androidStrings?.first(where: { $0.name == "study_id_hint" })
+        XCTAssertEqual("Id. del estudio", translation1?.value)
+        
+        let iosStrings = files[.init(filePath: "MobileToolboxApp-iOS/Localizable.strings", fileType: .iOS, locale: "es")]
+        XCTAssertNotNil(iosStrings)
+        let translation2 = iosStrings?.first(where: { $0.name == "Welcome to %@!" })
+        XCTAssertEqual("¡Deseamos darle la bienvenida a %@!", translation2?.value)
+
+        let enAndroidStrings = files[.init(filePath: "MobileToolboxApp-Android/strings.xml", fileType: .android, locale: "en")]
+        XCTAssertNotNil(enAndroidStrings)
+        let translation3 = enAndroidStrings?.first(where: { $0.name == "welcome_to_study" })
+        XCTAssertEqual("Welcome to %1$s!", translation3?.value)
     }
 }

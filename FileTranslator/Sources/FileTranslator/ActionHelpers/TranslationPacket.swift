@@ -69,6 +69,30 @@ struct TranslationPacket {
 
         try data.write(to: fileURL, options: .atomic)
     }
+    
+    func translateFromHTML(_ locale: String) throws {
+        let fileURL = baseURL.appendingPathComponent("\(locale).html", isDirectory: false)
+        let decoder = HTMLTableDecoder()
+        let files = try decoder.decode(contentsOf: fileURL)
+        
+        try files.forEach { fileId, strings in
+            let original: StringsContainer = stringsMap[fileId.fileType]?[fileId.filePath].map {
+                var ret = $0
+                ret.strings.merge(with: strings)
+                return ret
+            } ?? StringsFile(strings: strings)
+            
+            let data = try original.encode(for: fileId.fileType)
+            let url = baseURL.appending(path: fileId.locale).appending(path: fileId.fileType.rawValue).appending(path: fileId.filePath)
+            
+            let dirURL = url.deletingLastPathComponent()
+            if !FileManager.default.fileExists(atPath: dirURL.path) {
+                try FileManager.default.createDirectory(at: dirURL, withIntermediateDirectories: true, attributes: nil)
+            }
+            
+            try data.write(to: url, options: .atomic)
+        }
+    }
 }
 
 let kWrappedCharacters = CharacterSet(charactersIn: "\n\t\"")

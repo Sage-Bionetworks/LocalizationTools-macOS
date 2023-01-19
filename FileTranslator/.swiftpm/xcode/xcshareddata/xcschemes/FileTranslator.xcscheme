@@ -90,7 +90,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "create ~/Github/MobileToolboxApp-iOS/Localization/"
+            argument = "translate ~/Github/MobileToolboxApp-iOS/Localization/"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

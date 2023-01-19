@@ -5,6 +5,10 @@ import Foundation
 import JsonModel
 
 class JsonStringsEncoder : OrderedJSONEncoder {
+    override init() {
+        super.init()
+        self.shouldOrderKeys = true
+    }
 }
 
 class JsonStringsDecoder : JSONDecoder, StringsDecoder {

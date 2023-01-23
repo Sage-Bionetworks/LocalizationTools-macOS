@@ -70,8 +70,26 @@ struct TranslationPacket {
         try data.write(to: fileURL, options: .atomic)
     }
     
-    func translateFromHTML(_ locale: String) throws {
-        let fileURL = baseURL.appendingPathComponent("\(locale).html", isDirectory: false)
+    func translateFromHTML() throws {
+        let resourceKeys : [URLResourceKey] = [.creationDateKey, .isDirectoryKey]
+        let enumerator = FileManager.default.enumerator(at: baseURL,
+                                                        includingPropertiesForKeys: resourceKeys,
+                                                        options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants, .producesRelativePathURLs],
+                                                        errorHandler: { (url, error) -> Bool in
+            print("directoryEnumerator error at \(url): ", error)
+            return true
+        })!
+
+        for case let fileURL as URL in enumerator {
+            let resourceValues = try fileURL.resourceValues(forKeys: Set(resourceKeys))
+            if !resourceValues.isDirectory!, fileURL.pathExtension == "html" {
+                try _parseAndTranslate(fileURL: fileURL)
+            }
+        }
+    }
+    
+    func _parseAndTranslate(fileURL: URL) throws {
+        
         let decoder = HTMLTableDecoder()
         let files = try decoder.decode(contentsOf: fileURL)
         

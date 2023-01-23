@@ -3,7 +3,7 @@ import Foundation
 @main
 public struct FileTranslator {
     enum Actions : String, CaseIterable {
-        case create, clean, translate
+        case create, clean, translate, xcode
     }
 
     public static func main() {
@@ -41,7 +41,11 @@ public struct FileTranslator {
             case .translate:
                 print("translating at \(url)")
                 let packet = try TranslationPacket(baseURL: url)
-                try packet.translateFromHTML("es")
+                try packet.translateFromHTML()
+            case .xcode:
+                print("search and write swift files in \(url)")
+                let xcodeStringFinder = XcodeStringFinder(url)
+                try xcodeStringFinder.searchAndReplace()
             }
         }
         catch {
